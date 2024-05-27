@@ -1,3 +1,36 @@
+import { getsAuth } from "./configs/firebase.js";
+
+export const test = (req, res) => {
+   res.send("Hello World!")
+}
+
+export const register = async (req , res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const userRecord = await getsAuth.createUser({
+      email: email,
+      password: password,
+      displayName: name,
+    });
+
+    const user = {
+      name: name,
+      email: email,
+      uid: userRecord.uid,
+    };
+
+    await setUser(userRecord.uid, user);
+
+    res
+      .status(201)
+      .send({ message: "User registered successfully", uid: userRecord.uid });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+}
+
+
 import { db } from "./configs/firebase.js";
 
 export const setUser = async (uid, userData) => {
